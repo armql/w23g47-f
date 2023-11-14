@@ -3,9 +3,9 @@ import Book from "../forms/Book/Book";
 
 export default function Home() {
   return (
-    <div className="relative w-screen h-screen bg-gray-50">
-      <div>Its more than just a trip</div>
-      <div className="flex flex-col items-center justify-center">
+    <div className="relative w-screen h-screen bg-indigo-50">
+      <div>Header Goes here</div>
+      <div className="flex flex-col items-center justify-center h-full">
         <Book />
       </div>
     </div>
