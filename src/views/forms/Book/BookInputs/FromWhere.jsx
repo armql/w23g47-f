@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const airportData = [
   {
@@ -163,10 +163,6 @@ export default function FromWhere() {
     setIsOpen(!isOpen);
   };
 
-  const closeDropdown = () => {
-    setIsOpen(false);
-  };
-
   const handleInput = (airport) => {
     setSelectedAirport(airport);
     setSearchTerm(airport.airport);
@@ -185,14 +181,24 @@ export default function FromWhere() {
         (word) =>
           airport.city.toLowerCase().includes(word) ||
           airport.airport.toLowerCase().includes(word) ||
-          airport.code.toLowerCase().includes(word)
+          airport.code.toLowerCase().includes(word),
       );
     });
 
     setFilteredAirports(filtered);
     setDropdown(!!term);
     setTerm(!!filtered.length);
-    setSelectedAirport(null); // Reset selected airport when searching
+    setSelectedAirport(null);
+  };
+
+  const handleBlur = (e) => {
+    const isClickInsideDropdown = e.relatedTarget?.closest(".dropdown");
+
+    setIsOpen(false);
+    if (!isClickInsideDropdown) {
+      setIsOpen(false);
+      setDropdown(false);
+    }
   };
 
   // TODO: Connect with database instead of dynamic data
@@ -205,19 +211,22 @@ export default function FromWhere() {
 
   return (
     <div
-      className={`relative py-1.5 px-2 text-sm border-r-2 rounded-l-md border-indigo-200 transition duration-100 ${
-        isOpen
-          ? "bg-indigo-200 cursor-alias text-white ring ring-indigo-400 z-10"
-          : "bg-white cursor-pointer"
-      }`}
+      className={`relative w-full rounded-tl-md border-r-2 border-indigo-200 
+                px-1.5 py-1.5 transition duration-100 md:rounded-tl-md md:px-1.5 md:py-1.5 
+                xl:rounded-l-md xl:px-2 xl:py-1.5 ${
+                  isOpen
+                    ? "z-10 cursor-alias bg-indigo-200 text-white ring ring-indigo-400"
+                    : "cursor-pointer bg-white"
+                }`}
     >
-      <div className="flex flex-row justify-center items-center">
+      <div className="flex w-full flex-row items-center justify-start">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="32"
           height="32"
           viewBox="0 0 32 32"
           fill="none"
+          className="h-7 w-7 lg:h-8 lg:w-8"
         >
           <path
             fill-rule="evenodd"
@@ -228,45 +237,51 @@ export default function FromWhere() {
         </svg>
         <input
           onFocus={toggleDropdown}
-          onBlur={closeDropdown}
+          onBlur={handleBlur}
           onChange={handleSearch}
           type="search"
           name="fromWhere"
           id="fromWhere"
           placeholder="From where?"
           value={selectedAirport ? selectedAirport.airport : searchTerm}
-          className={`border-2 capitalize ring-2 ring-transparent transition duration-300 border-transparent bg-transparent text-indigo-950 ${
+          className={`border-2 border-transparent bg-transparent text-sm capitalize text-indigo-950 ring-2 ring-transparent transition duration-300 md:text-sm xl:w-72 xl:text-sm ${
             isOpen ? "placeholder:text-indigo-950" : ""
           }`}
         />
-        {dropdown && (
-          <div className="absolute border-2 border-indigo-200 rounded-sm shadow-sm h-40 overscroll-y-auto overflow-y-auto top-12 bg-indigo-100 left-0 right-0 font-light text-[16px] flex flex-col">
-            {term ? (
-              filteredAirports.map((airport) => (
-                <div
-                  key={airport.code}
-                  onClick={() => handleInput(airport)}
-                  className="hover:text-indigo-900 hover:bg-white transition cursor-pointer group text-indigo-700 py-4 px-4 flex flex-row justify-between items-center"
-                >
+      </div>
+      {dropdown && (
+        <div
+          onBlur={() => setDropdown(false)}
+          tabIndex={0}
+          className="dropdown absolute left-0 right-0 top-12 z-20 flex h-40 translate-y-0 flex-col overflow-y-auto overscroll-y-auto rounded-sm border-2 border-indigo-200 bg-indigo-100 font-light shadow-sm lg:top-10 lg:translate-y-3"
+        >
+          {term ? (
+            filteredAirports.map((airport) => (
+              <div
+                key={airport.code}
+                onClick={() => handleInput(airport)}
+                className="group flex cursor-pointer flex-row items-center justify-between gap-2 px-4 py-2 text-indigo-700 transition hover:bg-white hover:text-indigo-900 md:py-3 xl:py-4"
+              >
+                <div className="text-xs md:text-[13px] lg:text-[14px] xl:text-[16px]">
                   {airport.airport}
-                  <div className="flex flex-col text-xs gap-2">
-                    <div className="bg-white p-1 rounded-lg group-hover:bg-indigo-50 transition duration-300">
-                      {airport.code}
-                    </div>
-                    <div className="bg-sky-500 text-white p-1 rounded-lg">
-                      {airport.cityCode}
-                    </div>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-2 text-xs">
+                  <div className="rounded-lg bg-white p-1 transition duration-300 group-hover:bg-indigo-50">
+                    {airport.code}
+                  </div>
+                  <div className="rounded-lg bg-sky-500 p-1 text-white">
+                    {airport.cityCode}
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="m-auto text-indigo-500 font-normal flex justify-center items-center">
-                <div>No airports were found</div>
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            ))
+          ) : (
+            <div className="m-auto flex items-center justify-center font-normal text-indigo-500">
+              <div>No airports were found</div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

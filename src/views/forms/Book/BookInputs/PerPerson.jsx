@@ -1,15 +1,81 @@
-import React from "react";
+import { isDisabled } from "@testing-library/user-event/dist/utils";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 export default function PerPerson() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [term, setTerm] = useState(false);
+  const [filteredAirports, setFilteredAirports] = useState([]);
+  const [dropdown, setDropdown] = useState(false);
+  const [selectedAirport, setSelectedAirport] = useState(null);
+  const [adult, setAdult] = useState(0);
+  const [children, setChildren] = useState(0);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+    setDropdown(!dropdown);
+  };
+
+  const closeDropdown = () => {
+    setIsOpen(false);
+    setDropdown(false);
+  };
+
+  const handleAdult = (action) => {
+    if (action === "add") {
+      setAdult((prevAdult) => prevAdult + 1);
+    } else if (action === "remove" && adult > 0) {
+      setAdult((prevAdult) => prevAdult - 1);
+    }
+  };
+
+  const handleChildren = (action) => {
+    if (action === "add") {
+      setChildren((prevChild) => prevChild + 1);
+    } else if (action === "remove" && children > 0) {
+      setChildren((prevChild) => prevChild - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        closeDropdown();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // TODO: Connect with database instead of dynamic data
+  // useEffect(() => {
+  //   try {
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, []);
+
   return (
-    <div className="py-1.5 px-2 text-sm bg-white border-indigo-200">
-      <div className="flex flex-row justify-center items-center">
+    <div
+      className={`relative w-full select-none rounded-bl-lg border-r-2 border-indigo-200 px-1.5 py-1.5 transition duration-100 sm:rounded-none md:rounded-none md:px-1.5 md:py-1.5 xl:px-2 xl:py-1.5 ${
+        isOpen
+          ? "z-10 cursor-alias bg-indigo-200 text-white ring ring-indigo-400"
+          : "cursor-pointer bg-white"
+      }`}
+    >
+      <div className="flex w-full flex-row items-center justify-start">
         <svg
           width="32"
           height="32"
           viewBox="0 0 32 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          className="h-7 w-7 lg:h-8 lg:w-8"
         >
           <circle cx="16" cy="11" r="4" fill="#6E7491" />
           <path
@@ -17,13 +83,127 @@ export default function PerPerson() {
             fill="#6E7491"
           />
         </svg>
-        <input
-          type="search"
-          name="fromWhere"
-          id="fromWhere"
-          placeholder="How many?"
-          className="border-2 ring-2 ring-transparent border-transparent"
-        />
+        <button
+          onClick={toggleDropdown}
+          onBlur={closeDropdown}
+          type="button"
+          name="perPerson"
+          id="perPerson"
+          value={selectedAirport ? selectedAirport.airport : searchTerm}
+          className={`whitespace-nowrap border-2 border-transparent bg-transparent text-sm text-indigo-950 ring-2 ring-transparent transition duration-300 md:w-32 md:text-sm xl:text-sm ${
+            isOpen ? "text-indigo-900" : "text-gray-400"
+          } `}
+        >
+          {!adult <= 0 ? adult : "X"} adult, {!children <= 0 ? children : "X"}{" "}
+          children
+        </button>
+        {dropdown && (
+          <div
+            ref={dropdownRef}
+            className="absolute left-0 right-0 top-12 flex h-24 flex-col rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm"
+          >
+            <div className="flex items-center justify-between px-2 py-2 text-[16px] text-indigo-950">
+              <div className="font-normal">Adult</div>
+              <div className="flex items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => handleAdult("add")}
+                  className="rounded-sm bg-indigo-50 px-1 py-0.5 text-indigo-700 hover:bg-indigo-100 active:bg-indigo-200"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAdult("remove")}
+                  disabled={adult === 0}
+                  className={`rounded-sm px-1 py-0.5 ${
+                    adult === 0
+                      ? "cursor-not-allowed bg-gray-100 text-gray-700"
+                      : "bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 12h-15"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between px-2 py-2 text-[16px] text-indigo-950">
+              <div className="font-normal">Minor</div>
+              <div className="flex items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => handleChildren("add")}
+                  className="rounded-sm bg-indigo-50 px-1 py-0.5 text-indigo-700 hover:bg-indigo-100 active:bg-indigo-200"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  disabled={children === 0}
+                  onClick={() => handleChildren("remove")}
+                  className={`rounded-sm px-1 py-0.5 ${
+                    children === 0
+                      ? "cursor-not-allowed bg-gray-100 text-gray-700"
+                      : "bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 12h-15"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
