@@ -1,8 +1,216 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+const airportData = [
+  {
+    city: "New York",
+    airport: "Teterboro Airport",
+    code: "TEB",
+    cityCode: "NYC",
+    location: {
+      latitude: 40.8505,
+      longitude: -74.0603,
+    },
+    terminals: ["Main Terminal", "Jet Aviation Terminal", "Meridian Terminal"],
+    airlines: ["NetJets", "Jet Aviation", "Meridian", "Wheels Up"],
+  },
+  {
+    city: "New York",
+    airport: "John F. Kennedy International Airport",
+    code: "JFK",
+    cityCode: "NYC",
+    location: {
+      latitude: 40.6413,
+      longitude: -73.7781,
+    },
+    terminals: [
+      "Terminal 1",
+      "Terminal 2",
+      "Terminal 4",
+      "Terminal 5",
+      "Terminal 7",
+      "Terminal 8",
+    ],
+    airlines: [
+      "American Airlines",
+      "Delta Air Lines",
+      "JetBlue Airways",
+      "British Airways",
+      "Lufthansa",
+    ],
+  },
+  {
+    city: "Los Angeles",
+    airport: "Los Angeles International Airport",
+    code: "LAX",
+    cityCode: "LAX",
+    location: {
+      latitude: 33.9416,
+      longitude: -118.4085,
+    },
+    terminals: [
+      "Tom Bradley International Terminal",
+      "Terminal 1",
+      "Terminal 2",
+      "Terminal 3",
+      "Terminal 4",
+      "Terminal 5",
+      "Terminal 6",
+      "Terminal 7",
+      "Terminal 8",
+    ],
+    airlines: [
+      "United Airlines",
+      "American Airlines",
+      "Delta Air Lines",
+      "Southwest Airlines",
+      "Alaska Airlines",
+    ],
+  },
+  {
+    city: "London",
+    airport: "Heathrow Airport",
+    code: "LHR",
+    cityCode: "LON",
+    location: {
+      latitude: 51.47,
+      longitude: -0.4543,
+    },
+    terminals: ["Terminal 2", "Terminal 3", "Terminal 4", "Terminal 5"],
+    airlines: [
+      "British Airways",
+      "Virgin Atlantic",
+      "American Airlines",
+      "Qatar Airways",
+    ],
+  },
+  {
+    city: "Paris",
+    airport: "Charles de Gaulle Airport",
+    code: "CDG",
+    cityCode: "PAR",
+    location: {
+      latitude: 49.0097,
+      longitude: 2.5479,
+    },
+    terminals: [
+      "Terminal 1",
+      "Terminal 2A",
+      "Terminal 2B",
+      "Terminal 2C",
+      "Terminal 2D",
+      "Terminal 2E",
+      "Terminal 2F",
+    ],
+    airlines: ["Air France", "Delta Air Lines", "Emirates", "Lufthansa"],
+  },
+  {
+    city: "Tokyo",
+    airport: "Haneda Airport",
+    code: "HND",
+    cityCode: "TYO",
+    location: {
+      latitude: 35.5494,
+      longitude: 139.7798,
+    },
+    terminals: ["Terminal 1", "Terminal 2", "International Terminal"],
+    airlines: [
+      "Japan Airlines",
+      "All Nippon Airways",
+      "Delta Air Lines",
+      "Singapore Airlines",
+    ],
+  },
+  {
+    city: "Beijing",
+    airport: "Beijing Capital International Airport",
+    code: "PEK",
+    cityCode: "BJS",
+    location: {
+      latitude: 40.0799,
+      longitude: 116.6031,
+    },
+    terminals: ["Terminal 1", "Terminal 2", "Terminal 3"],
+    airlines: [
+      "Air China",
+      "China Eastern Airlines",
+      "China Southern Airlines",
+      "Hainan Airlines",
+    ],
+  },
+  {
+    city: "Dubai",
+    airport: "Dubai International Airport",
+    code: "DXB",
+    cityCode: "DXB",
+    location: {
+      latitude: 25.2532,
+      longitude: 55.3657,
+    },
+    terminals: ["Terminal 1", "Terminal 2", "Terminal 3"],
+    airlines: ["Emirates", "Flydubai", "Qatar Airways", "British Airways"],
+  },
+];
 
 export default function WhereTo() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [term, setTerm] = useState(false);
+  const [filteredAirports, setFilteredAirports] = useState([]);
+  const [dropdown, setDropdown] = useState(false);
+  const [selectedAirport, setSelectedAirport] = useState(null);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsOpen(false);
+  };
+
+  const handleInput = (airport) => {
+    setSelectedAirport(airport);
+    setSearchTerm(airport.airport);
+    setFilteredAirports([]);
+    setDropdown(false);
+  };
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    const filtered = airportData.filter((airport) => {
+      const searchWords = term.split(" ");
+
+      return searchWords.some(
+        (word) =>
+          airport.city.toLowerCase().includes(word) ||
+          airport.airport.toLowerCase().includes(word) ||
+          airport.code.toLowerCase().includes(word)
+      );
+    });
+
+    setFilteredAirports(filtered);
+    setDropdown(!!term);
+    setTerm(!!filtered.length);
+    setSelectedAirport(null); // Reset selected airport when searching
+  };
+
+  // TODO: Connect with database instead of dynamic data
+  // useEffect(() => {
+  //   try {
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, []);
+
   return (
-    <div className="py-1.5 px-2 text-sm bg-white border-r-2 border-indigo-200">
+    <div
+      className={`relative py-1.5 px-2 text-sm border-r-2 border-indigo-200 transition duration-100 ${
+        isOpen
+          ? "bg-indigo-200 cursor-alias text-white ring ring-indigo-400 z-10"
+          : "bg-white cursor-pointer"
+      }`}
+    >
       <div className="flex flex-row justify-center items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -19,12 +227,45 @@ export default function WhereTo() {
           />
         </svg>
         <input
+          onFocus={toggleDropdown}
+          onBlur={closeDropdown}
+          onChange={handleSearch}
           type="search"
-          name="fromWhere"
-          id="fromWhere"
+          name="whereTo"
+          id="whereTo"
           placeholder="Where to?"
-          className="border-2 ring-2 ring-transparent border-transparent"
+          value={selectedAirport ? selectedAirport.airport : searchTerm}
+          className={`border-2 capitalize ring-2 ring-transparent transition duration-300 border-transparent bg-transparent text-indigo-950 ${
+            isOpen ? "placeholder:text-indigo-950" : ""
+          }`}
         />
+        {dropdown && (
+          <div className="absolute border-2 border-indigo-200 rounded-sm shadow-sm h-40 overscroll-y-auto overflow-y-auto top-12 bg-indigo-100 left-0 right-0 font-light text-[16px] flex flex-col">
+            {term ? (
+              filteredAirports.map((airport) => (
+                <div
+                  key={airport.code}
+                  onClick={() => handleInput(airport)}
+                  className="hover:text-indigo-900 hover:bg-white transition cursor-pointer group text-indigo-700 py-4 px-4 flex flex-row justify-between items-center"
+                >
+                  {airport.airport}
+                  <div className="flex flex-col text-xs gap-2">
+                    <div className="bg-white p-1 rounded-lg group-hover:bg-indigo-50 transition duration-300">
+                      {airport.code}
+                    </div>
+                    <div className="bg-sky-500 text-white p-1 rounded-lg">
+                      {airport.cityCode}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="m-auto text-indigo-500 font-normal flex justify-center items-center">
+                <div>No airports were found</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
