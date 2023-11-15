@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import {
   format,
@@ -7,18 +7,18 @@ import {
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
-  isSameMonth,
   isSameDay,
 } from "date-fns";
 
 export default function DepartArrive() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-  const [activeMonth, setActiveMonth] = useState("January");
+  const [activeMonth, setActiveMonth] = useState("first");
   const [currentMonth1, setCurrentMonth1] = useState(new Date());
   const [currentMonth2, setCurrentMonth2] = useState(
     addMonths(currentMonth1, 1),
   );
+
   const [departureDate, setDepartureDate] = useState(null);
   const [arrivalDate, setArrivalDate] = useState(null);
 
@@ -51,7 +51,11 @@ export default function DepartArrive() {
     }
   };
 
-  const renderCalendar = (currentMonth) => {
+  useEffect(() => {
+    setCurrentMonth2(addMonths(currentMonth1, 1));
+  }, [currentMonth1]);
+
+  const renderCalendar = (currentMonth, isActive) => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -98,68 +102,128 @@ export default function DepartArrive() {
       ...daysFromNextMonth,
     ];
 
-    return (
-      <div className="h-[260px]">
-        <div className={`px-2 text-[13px] font-normal text-indigo-800`}>
-          {format(currentMonth, "MMMM yyyy")}
-        </div>
-        <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-3 text-center text-[11px] font-normal">
-          <div>S</div>
-          <div>M</div>
-          <div>T</div>
-          <div>W</div>
-          <div>T</div>
-          <div>F</div>
-          <div>S</div>
-        </div>
-        <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-2 text-center text-[10px] font-normal">
-          {allDays.map((day, index) => {
-            const currentDate = new Date(
-              currentMonth.getFullYear(),
-              currentMonth.getMonth(),
-              parseInt(day.day),
-            );
+    if (isActive) {
+      return (
+        <div className="h-[260px]">
+          <div className={`px-2 text-[13px] font-normal text-indigo-800`}>
+            {format(currentMonth, "MMMM yyyy")}
+          </div>
+          <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-3 text-center text-[11px] font-normal">
+            <div>S</div>
+            <div>M</div>
+            <div>T</div>
+            <div>W</div>
+            <div>T</div>
+            <div>F</div>
+            <div>S</div>
+          </div>
+          <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-2 text-center text-[10px] font-normal">
+            {allDays.map((day, index) => {
+              const currentDate = new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth(),
+                parseInt(day.day),
+              );
 
-            const isDayInCurrentMonth = day.isCurrentMonth;
+              const isDayInCurrentMonth = day.isCurrentMonth;
 
-            let buttonClass = `flex items-center p-[3px] justify-center text-center ${
-              isDayInCurrentMonth ? "text-black" : "text-gray-400"
-            }`;
+              let buttonClass = `flex items-center p-[3px] justify-center text-center ${
+                isDayInCurrentMonth
+                  ? "text-black"
+                  : "text-gray-400 dark:text-indigo-300"
+              }`;
 
-            if (!isDayInCurrentMonth) {
-              buttonClass += " cursor-not-allowed";
-            } else {
-              if (isSameDay(currentDate, departureDate)) {
-                buttonClass += " bg-indigo-200";
-              } else if (
-                arrivalDate &&
-                currentDate > departureDate &&
-                currentDate < arrivalDate
-              ) {
-                buttonClass += " bg-indigo-50";
-              } else if (isSameDay(currentDate, arrivalDate)) {
-                buttonClass += " bg-indigo-200";
+              if (!isDayInCurrentMonth) {
+                buttonClass += " cursor-not-allowed";
+              } else {
+                if (isSameDay(currentDate, departureDate)) {
+                  buttonClass += " bg-indigo-200 dark:bg-indigo-400";
+                } else if (
+                  arrivalDate &&
+                  currentDate > departureDate &&
+                  currentDate < arrivalDate
+                ) {
+                  buttonClass += " bg-indigo-50 dark:bg-indigo-200";
+                } else if (isSameDay(currentDate, arrivalDate)) {
+                  buttonClass += " bg-indigo-200 dark:bg-indigo-400";
+                }
               }
-            }
 
-            return (
-              <button
-                key={index}
-                type="button"
-                className={buttonClass}
-                onClick={() => {
-                  if (isDayInCurrentMonth) {
-                    handleDayClick(currentDate);
-                  }
-                }}
-              >
-                {day.day}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={index}
+                  type="button"
+                  className={buttonClass}
+                  onClick={() => {
+                    if (isDayInCurrentMonth) {
+                      handleDayClick(currentDate);
+                    }
+                  }}
+                >
+                  {day.day}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="h-[260px]">
+          <div className={`px-2 text-[13px] font-normal text-indigo-800`}>
+            {format(currentMonth, "MMMM yyyy")}
+          </div>
+          <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-3 text-center text-[11px] font-normal">
+            <div>S</div>
+            <div>M</div>
+            <div>T</div>
+            <div>W</div>
+            <div>T</div>
+            <div>F</div>
+            <div>S</div>
+          </div>
+          <div className="grid grid-cols-7 items-center justify-center gap-4 px-4 pt-2 text-center text-[10px] font-normal">
+            {allDays.map((day, index) => {
+              const currentDate = new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth(),
+                parseInt(day.day),
+              );
+
+              const isDayInCurrentMonth = day.isCurrentMonth;
+
+              let buttonClass = `flex items-center p-[3px] justify-center text-center ${
+                isDayInCurrentMonth
+                  ? "text-black"
+                  : "text-gray-400 dark:text-indigo-300"
+              }`;
+
+              if (!isDayInCurrentMonth) {
+                buttonClass += " cursor-not-allowed";
+              } else {
+                if (isSameDay(currentDate, departureDate)) {
+                  buttonClass += " bg-indigo-200 dark:bg-indigo-400";
+                } else if (
+                  arrivalDate &&
+                  currentDate > departureDate &&
+                  currentDate < arrivalDate
+                ) {
+                  buttonClass += " bg-indigo-50 dark:bg-indigo-200";
+                } else if (isSameDay(currentDate, arrivalDate)) {
+                  buttonClass += " bg-indigo-200 dark:bg-indigo-400";
+                }
+              }
+
+              return (
+                <button key={index} type="button" className={buttonClass}>
+                  {day.day}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
   };
 
   const handleMonths = (direction) => {
@@ -274,7 +338,9 @@ export default function DepartArrive() {
                 {format(departureDate, "do")} - {format(arrivalDate, "do")}
               </>
             ) : (
-              <div className="text-gray-400">Depart - Return</div>
+              <div className="text-gray-400 dark:text-indigo-950">
+                Depart - Return
+              </div>
             )}
           </button>
         </div>
@@ -282,9 +348,9 @@ export default function DepartArrive() {
       {dropdown && (
         <Draggable>
           <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center active:cursor-grabbing">
-            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm">
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm dark:bg-indigo-50">
               <div className="flex flex-row items-center justify-center gap-4 border-b-2 p-2 text-xs text-gray-400">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-indigo-500">
                   <input
                     type="radio"
                     name="roundTrip"
@@ -293,11 +359,11 @@ export default function DepartArrive() {
                   />
                   Round Trip
                 </div>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-indigo-500">
                   <input type="radio" name="roundTrip" id="roundTrip" /> One Way
                 </div>
                 <div className="flex flex-row items-center justify-center gap-2">
-                  <div className="flex flex-row items-center gap-2 rounded-sm border-2 border-indigo-600 px-2 py-1">
+                  <div className="flex flex-row items-center gap-2 rounded-sm border-2 border-indigo-600 bg-indigo-50 px-2 py-1 dark:bg-indigo-100">
                     <svg
                       width="32"
                       height="32"
@@ -331,7 +397,9 @@ export default function DepartArrive() {
                     </svg>
                     <div
                       className={`w-28 pr-5 ${
-                        departureDate ? "text-black" : "text-gray-400"
+                        departureDate
+                          ? "text-indigo-950 dark:text-indigo-950"
+                          : "text-gray-400 dark:text-indigo-800"
                       }`}
                     >
                       {departureDate && arrivalDate ? (
@@ -377,7 +445,10 @@ export default function DepartArrive() {
                       activeMonth ? " border-indigo-400" : "border-transparent"
                     }`}
                   >
-                    {renderCalendar(currentMonth1)}
+                    {renderCalendar(
+                      currentMonth1,
+                      activeMonth === true ? true : false,
+                    )}
                   </div>
                   <div
                     onClick={() => handleMonths("second")}
@@ -387,7 +458,10 @@ export default function DepartArrive() {
                         : "border-transparent"
                     }`}
                   >
-                    {renderCalendar(currentMonth2)}
+                    {renderCalendar(
+                      currentMonth2,
+                      activeMonth === false ? true : false,
+                    )}
                   </div>
                 </div>
                 <button type="button" onClick={() => handleMonthChange("next")}>

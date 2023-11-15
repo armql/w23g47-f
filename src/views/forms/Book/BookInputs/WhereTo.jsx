@@ -217,7 +217,7 @@ export default function WhereTo() {
       className={`duration-102 relative flex w-full border-r-2 px-1.5 py-1.5 transition sm:rounded-bl-lg md:rounded-bl-lg md:px-1.5 md:py-1.5 lg:rounded-bl-lg xl:rounded-none xl:px-2 xl:py-1.5 ${
         isOpen
           ? "z-10 cursor-alias border-indigo-200 bg-indigo-200 text-indigo-950 ring ring-indigo-400 dark:border-indigo-700 dark:bg-indigo-700 dark:ring-white"
-          : "cursor-pointer bg-white dark:border-indigo-700 dark:bg-indigo-200"
+          : "cursor-pointer border-indigo-200 bg-white dark:border-indigo-700 dark:bg-indigo-200"
       }`}
     >
       <div className="flex w-full flex-row items-center justify-start">

@@ -216,7 +216,7 @@ export default function FromWhere() {
                 xl:rounded-l-md xl:px-2 xl:py-1.5 ${
                   isOpen
                     ? "z-10 cursor-alias border-indigo-200 bg-indigo-200 text-indigo-950 ring ring-indigo-400 dark:border-indigo-700 dark:bg-indigo-700 dark:ring-white"
-                    : "cursor-pointer bg-white dark:border-indigo-700 dark:bg-indigo-200"
+                    : "cursor-pointer border-indigo-200 bg-white dark:border-indigo-700 dark:bg-indigo-200"
                 }`}
     >
       <div className="flex w-full flex-row items-center justify-start">

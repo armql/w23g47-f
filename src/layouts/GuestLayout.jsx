@@ -2,6 +2,7 @@ import React, { Fragment, useRef, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../views/navbar/Navbar";
 import Spline from "@splinetool/react-spline";
+import bg from "../assets/images/hero-bg.png";
 
 export default function GuestLayout() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -28,6 +29,11 @@ export default function GuestLayout() {
           <Spline
             scene="https://prod.spline.design/VUbPkLw74PeIfeYg/scene.splinecode"
             onLoad={onLoad}
+          />
+          <img
+            src={bg}
+            alt=""
+            className="absolute bottom-0 left-0 right-0 top-0 h-full w-full object-cover md:object-contain"
           />
         </div>
         <div className="absolute bottom-4 left-4 z-10">
