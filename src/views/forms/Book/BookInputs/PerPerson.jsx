@@ -3,9 +3,6 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 
 export default function PerPerson() {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [term, setTerm] = useState(false);
-  const [filteredAirports, setFilteredAirports] = useState([]);
   const [dropdown, setDropdown] = useState(false);
   const [selectedAirport, setSelectedAirport] = useState(null);
   const [adult, setAdult] = useState(0);
@@ -62,10 +59,10 @@ export default function PerPerson() {
 
   return (
     <div
-      className={`relative w-full select-none rounded-bl-lg border-r-2 border-indigo-200 px-1.5 py-1.5 transition duration-100 sm:rounded-none md:rounded-none md:px-1.5 md:py-1.5 xl:px-2 xl:py-1.5 ${
+      className={`relative w-full select-none rounded-bl-lg border-r-2 px-1.5 py-1.5 transition duration-100 sm:rounded-none md:rounded-none md:px-1.5 md:py-1.5 xl:px-2 xl:py-1.5 ${
         isOpen
-          ? "z-10 cursor-alias bg-indigo-200 text-white ring ring-indigo-400"
-          : "cursor-pointer bg-white"
+          ? "z-10 cursor-alias border-indigo-200 bg-indigo-200 text-indigo-950 ring ring-indigo-400 dark:border-indigo-700 dark:bg-indigo-700 dark:ring-white"
+          : "cursor-pointer border-indigo-200 bg-white dark:bg-indigo-200"
       }`}
     >
       <div className="flex w-full flex-row items-center justify-start">
@@ -76,11 +73,25 @@ export default function PerPerson() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="h-7 w-7 lg:h-8 lg:w-8"
+          style={{ fill: "currentColor" }}
         >
-          <circle cx="16" cy="11" r="4" fill="#6E7491" />
+          <circle
+            cx="16"
+            cy="11"
+            r="4"
+            className={` ${
+              isOpen
+                ? "text-indigo-950 dark:text-white"
+                : "text-gray-500 dark:text-indigo-950"
+            }`}
+          />
           <path
             d="M10 24C8.89543 24 7.97435 23.0907 8.24685 22.0202C9.12788 18.5595 12.265 16 16 16C19.735 16 22.8721 18.5595 23.7531 22.0202C24.0257 23.0907 23.1046 24 22 24H10Z"
-            fill="#6E7491"
+            className={` ${
+              isOpen
+                ? "text-indigo-950 dark:text-white"
+                : "text-gray-500 dark:text-indigo-950"
+            }`}
           />
         </svg>
         <button
@@ -89,13 +100,30 @@ export default function PerPerson() {
           type="button"
           name="perPerson"
           id="perPerson"
-          value={selectedAirport ? selectedAirport.airport : searchTerm}
-          className={`whitespace-nowrap border-2 border-transparent bg-transparent text-sm text-indigo-950 ring-2 ring-transparent transition duration-300 md:w-32 md:text-sm xl:text-sm ${
-            isOpen ? "text-indigo-900" : "text-gray-400"
+          className={`whitespace-nowrap border-2 border-transparent bg-transparent text-start text-sm text-indigo-950 ring-2 ring-transparent transition duration-300 md:w-32 md:text-sm xl:text-sm ${
+            isOpen
+              ? "placeholder:text-indigo-950 dark:text-white dark:placeholder:text-white"
+              : "text-indigo-950 dark:text-indigo-950 dark:placeholder:text-indigo-950"
           } `}
         >
-          {!adult <= 0 ? adult : "X"} adult, {!children <= 0 ? children : "X"}{" "}
-          children
+          {!adult <= 0 || !children <= 0 ? (
+            <>
+              {!adult <= 0 ? adult + " " : "X "}
+              adult,
+              {!children <= 0 ? children + " " : " X "}
+              children
+            </>
+          ) : (
+            <div
+              className={`${
+                isOpen
+                  ? "placeholder:text-indigo-950 dark:text-white dark:placeholder:text-white"
+                  : "text-gray-400 dark:text-indigo-950 dark:placeholder:text-indigo-950"
+              }`}
+            >
+              How many?
+            </div>
+          )}
         </button>
         {dropdown && (
           <div
