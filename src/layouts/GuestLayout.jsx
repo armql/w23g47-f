@@ -40,7 +40,7 @@ export default function GuestLayout() {
           <button
             onClick={toggleDarkMode}
             type="button"
-            className="rounded-md bg-white px-4 py-2 text-lg shadow-md dark:bg-gray-800"
+            className="z-40 rounded-md bg-white px-4 py-2 text-lg shadow-md dark:bg-gray-800"
           >
             {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           </button>

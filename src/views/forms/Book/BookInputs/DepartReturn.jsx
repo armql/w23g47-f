@@ -18,9 +18,27 @@ export default function DepartArrive() {
   const [currentMonth2, setCurrentMonth2] = useState(
     addMonths(currentMonth1, 1),
   );
-
+  const [isOneWay, setIsOneWay] = useState(false);
   const [departureDate, setDepartureDate] = useState(null);
   const [arrivalDate, setArrivalDate] = useState(null);
+
+  const handleRoundTrip = () => {
+    setIsOneWay(false);
+
+    if (arrivalDate) {
+      setDepartureDate(arrivalDate);
+      setArrivalDate(null);
+    }
+  };
+
+  const handleOneWay = () => {
+    setIsOneWay(true);
+
+    if (departureDate) {
+      setDepartureDate(departureDate);
+      setArrivalDate(departureDate);
+    }
+  };
 
   const handleDayClick = (day) => {
     const currentDate = new Date(
@@ -31,13 +49,53 @@ export default function DepartArrive() {
 
     const isDayInCurrentMonth =
       currentDate.getMonth() === currentMonth1.getMonth();
-
-    if (isDayInCurrentMonth) {
-      if (!departureDate) {
-        setDepartureDate(currentDate);
-      } else if (!arrivalDate) {
-        setArrivalDate(currentDate);
+    if (!isOneWay) {
+      if (isDayInCurrentMonth) {
+        if (!departureDate) {
+          setDepartureDate(currentDate);
+        } else if (!arrivalDate) {
+          if (departureDate && departureDate <= currentDate) {
+            if (isOneWay) {
+              setArrivalDate(currentDate);
+            } else {
+              if (currentDate > departureDate) {
+                setArrivalDate(currentDate);
+              }
+            }
+          }
+        } else if (
+          departureDate &&
+          arrivalDate &&
+          departureDate === arrivalDate
+        ) {
+          setDepartureDate(currentDate);
+          setArrivalDate(null);
+        }
       }
+    } else if (isOneWay) {
+      if (isDayInCurrentMonth) {
+        if (!departureDate) {
+          setDepartureDate(currentDate);
+          setArrivalDate(currentDate);
+        } else if (!arrivalDate) {
+          if (departureDate && departureDate <= currentDate) {
+            setArrivalDate(currentDate);
+          }
+        } else if (
+          departureDate &&
+          arrivalDate &&
+          departureDate === arrivalDate
+        ) {
+          setDepartureDate(currentDate);
+          setArrivalDate(currentDate);
+        }
+      }
+    } else {
+      return (
+        <div className="absolute bottom-0 left-0 right-0 top-0 border-2 border-red-200 bg-white p-4">
+          System error please try again later.
+        </div>
+      );
     }
   };
 
@@ -250,6 +308,11 @@ export default function DepartArrive() {
     setDropdown(false);
   };
 
+  const clearDates = () => {
+    setDepartureDate(null);
+    setArrivalDate(null);
+  };
+
   // TODO: Connect with database instead of dynamic data
   // useEffect(() => {
   //   try {
@@ -349,18 +412,47 @@ export default function DepartArrive() {
         <Draggable>
           <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center active:cursor-grabbing">
             <div className="flex flex-col items-center justify-center rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm dark:bg-indigo-50">
-              <div className="flex flex-row items-center justify-center gap-4 border-b-2 p-2 text-xs text-gray-400">
-                <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-indigo-500">
+              <div className="flex flex-row items-center justify-center gap-4 border-b-2 border-indigo-100 px-8 py-3 text-xs text-gray-400">
+                {arrivalDate && (
+                  <button
+                    type="button"
+                    onClick={clearDates}
+                    className="cursor-pointer rounded-sm bg-red-50 px-4 py-2 text-red-600 hover:bg-red-100 active:bg-red-200 dark:bg-red-600 dark:text-white dark:hover:bg-red-500 dark:active:bg-red-400"
+                  >
+                    Clear
+                  </button>
+                )}
+                <div
+                  className={`flex items-center justify-center gap-2   ${
+                    isOneWay
+                      ? "text-gray-400 dark:text-indigo-500"
+                      : "text-indigo-700 dark:text-indigo-900"
+                  }`}
+                >
                   <input
                     type="radio"
                     name="roundTrip"
                     id="roundTrip"
-                    className="border-black"
+                    checked={!isOneWay}
+                    onChange={handleRoundTrip}
                   />
                   Round Trip
                 </div>
-                <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-indigo-500">
-                  <input type="radio" name="roundTrip" id="roundTrip" /> One Way
+                <div
+                  className={`flex items-center justify-center gap-2   ${
+                    isOneWay
+                      ? "text-indigo-700 dark:text-indigo-900"
+                      : "text-gray-400 dark:text-indigo-500 "
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="oneWay"
+                    id="oneWay"
+                    checked={isOneWay}
+                    onChange={handleOneWay}
+                  />{" "}
+                  One Way
                 </div>
                 <div className="flex flex-row items-center justify-center gap-2">
                   <div className="flex flex-row items-center gap-2 rounded-sm border-2 border-indigo-600 bg-indigo-50 px-2 py-1 dark:bg-indigo-100">
