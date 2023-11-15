@@ -262,7 +262,7 @@ export default function FromWhere() {
         <div
           onBlur={() => setDropdown(false)}
           tabIndex={0}
-          className="dropdown absolute left-0 right-0 top-12 z-20 flex h-40 translate-y-0 flex-col overflow-y-auto overscroll-y-auto rounded-sm border-2 border-indigo-200 bg-indigo-100 font-light shadow-sm lg:top-10 lg:translate-y-3"
+          className="dropdown absolute left-0 right-0 top-11 z-20 flex h-40 translate-y-0 flex-col overflow-y-auto overscroll-y-auto rounded-sm border-2 border-indigo-200 bg-indigo-100 font-light shadow-sm md:top-11 lg:top-9 lg:translate-y-3 xl:top-9"
         >
           {term ? (
             filteredAirports.map((airport) => (

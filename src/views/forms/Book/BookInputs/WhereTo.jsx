@@ -260,7 +260,7 @@ export default function WhereTo() {
           <div
             onBlur={() => setDropdown(false)}
             tabIndex={0}
-            className="dropdown absolute left-0 right-0 top-9 z-20 flex h-40 flex-col overflow-y-auto overscroll-y-auto rounded-sm border-2 border-indigo-200 bg-indigo-100 text-[16px] font-light shadow-sm sm:top-12"
+            className="dropdown xl:top-13 absolute left-0 right-0 top-11 z-20 flex h-40 flex-col overflow-y-auto overscroll-y-auto rounded-sm border-2 border-indigo-200 bg-indigo-100 text-[16px] font-light shadow-sm md:top-11 lg:top-12"
           >
             {term ? (
               filteredAirports.map((airport) => (

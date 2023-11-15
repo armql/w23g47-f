@@ -4,7 +4,6 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 export default function PerPerson() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-  const [selectedAirport, setSelectedAirport] = useState(null);
   const [adult, setAdult] = useState(0);
   const [children, setChildren] = useState(0);
   const dropdownRef = useRef(null);
@@ -128,7 +127,7 @@ export default function PerPerson() {
         {dropdown && (
           <div
             ref={dropdownRef}
-            className="absolute left-0 right-0 top-12 flex h-24 flex-col rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm"
+            className="xl:top-13 absolute left-0 right-0 top-11 flex h-24 flex-col rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm md:top-11 lg:top-12"
           >
             <div className="flex items-center justify-between px-2 py-2 text-[16px] text-indigo-950">
               <div className="font-normal">Adult</div>
