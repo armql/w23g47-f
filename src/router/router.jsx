@@ -4,6 +4,7 @@ import GuestLayout from "../layouts/GuestLayout";
 import ClientLayout from "../layouts/ClientLayout";
 import EmployeeLayout from "../layouts/EmployeeLayout";
 import Home from "../views/home/Home";
+import TestingPage from "../components/custom/TestingPage";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <Home />,
+      },
+      {
+        path: "test",
+        element: <TestingPage />,
       },
     ],
   },
