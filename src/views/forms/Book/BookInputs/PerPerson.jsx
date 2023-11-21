@@ -1,21 +1,15 @@
 import { isDisabled } from "@testing-library/user-event/dist/utils";
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import useToggle from "../../../../hooks/useToggle";
 
 export default function PerPerson() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [dropdown, setDropdown] = useState(false);
   const [adult, setAdult] = useState(0);
   const [children, setChildren] = useState(0);
   const dropdownRef = useRef(null);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-    setDropdown(!dropdown);
-  };
+  const { auto, close, effect } = useToggle(false);
 
   const closeDropdown = () => {
-    setIsOpen(false);
-    setDropdown(false);
+    close(false);
   };
 
   const handleAdult = (action) => {
@@ -48,23 +42,18 @@ export default function PerPerson() {
     };
   }, []);
 
-  // TODO: Connect with database instead of dynamic data
-  // useEffect(() => {
-  //   try {
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, []);
-
   return (
     <div
       className={`relative w-full select-none rounded-bl-lg border-r-2 px-1.5 py-1.5 transition duration-100 sm:rounded-none md:rounded-none md:px-1.5 md:py-1.5 xl:px-2 xl:py-1.5 ${
-        isOpen
+        effect
           ? "z-10 cursor-alias border-indigo-200 bg-indigo-200 text-indigo-950 ring ring-indigo-400 dark:border-indigo-700 dark:bg-indigo-700 dark:ring-white"
           : "cursor-pointer border-indigo-200 bg-white dark:border-indigo-700 dark:bg-indigo-200"
       }`}
     >
-      <div className="flex w-full flex-row items-center justify-start">
+      <div
+        ref={dropdownRef}
+        className="flex w-full flex-row items-center justify-start"
+      >
         <svg
           width="32"
           height="32"
@@ -79,7 +68,7 @@ export default function PerPerson() {
             cy="11"
             r="4"
             className={` ${
-              isOpen
+              effect
                 ? "text-indigo-950 dark:text-white"
                 : "text-gray-500 dark:text-indigo-950"
             }`}
@@ -87,20 +76,19 @@ export default function PerPerson() {
           <path
             d="M10 24C8.89543 24 7.97435 23.0907 8.24685 22.0202C9.12788 18.5595 12.265 16 16 16C19.735 16 22.8721 18.5595 23.7531 22.0202C24.0257 23.0907 23.1046 24 22 24H10Z"
             className={` ${
-              isOpen
+              effect
                 ? "text-indigo-950 dark:text-white"
                 : "text-gray-500 dark:text-indigo-950"
             }`}
           />
         </svg>
         <button
-          onClick={toggleDropdown}
-          onBlur={closeDropdown}
+          onClick={auto}
           type="button"
           name="perPerson"
           id="perPerson"
           className={`whitespace-nowrap border-2 border-transparent bg-transparent text-start text-sm text-indigo-950 ring-2 ring-transparent transition duration-300 md:w-32 md:text-sm xl:text-sm ${
-            isOpen
+            effect
               ? "placeholder:text-indigo-950 dark:text-white dark:placeholder:text-white"
               : "text-indigo-950 dark:text-indigo-950 dark:placeholder:text-indigo-950"
           } `}
@@ -115,7 +103,7 @@ export default function PerPerson() {
           ) : (
             <div
               className={`${
-                isOpen
+                effect
                   ? "placeholder:text-indigo-950 dark:text-white dark:placeholder:text-white"
                   : "text-gray-400 dark:text-indigo-950 dark:placeholder:text-indigo-950"
               }`}
@@ -124,11 +112,8 @@ export default function PerPerson() {
             </div>
           )}
         </button>
-        {dropdown && (
-          <div
-            ref={dropdownRef}
-            className="xl:top-13 absolute left-0 right-0 top-11 flex h-24 flex-col rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm md:top-11 lg:top-12"
-          >
+        {effect && (
+          <div className="xl:top-13 absolute left-0 right-0 top-11 flex h-24 flex-col rounded-sm border-2 border-indigo-200 bg-white text-[16px] font-light shadow-sm md:top-11 lg:top-12">
             <div className="flex items-center justify-between px-2 py-2 text-[16px] text-indigo-950">
               <div className="font-normal">Adult</div>
               <div className="flex items-center gap-2 text-xs">
