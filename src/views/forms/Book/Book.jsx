@@ -5,6 +5,14 @@ import WhereTo from "./BookInputs/WhereTo";
 import DepartReturn from "./BookInputs/DepartReturn";
 
 export default function Book() {
+  // TODO: Connect with database instead of dynamic data
+  // useEffect(() => {
+  //   try {
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, []);
+
   return (
     <Fragment>
       <div className="flex h-full w-full flex-row items-center justify-center">

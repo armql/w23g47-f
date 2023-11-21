@@ -71,7 +71,7 @@ export default function TravelDeals() {
             />
           ))}
         </div>
-        <div className="rounded-lg shadow-sm md:w-[600px] lg:w-[1080px] xl:w-[1300px] 2xl:w-[1500px]">
+        <div className="rounded-lg shadow-sm md:w-[600px] lg:w-[1010px] xl:w-[1200px] 2xl:w-[1500px]">
           <img
             src={finalDeal}
             alt=""
