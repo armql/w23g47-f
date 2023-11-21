@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { Navigate, createBrowserRouter } from "react-router-dom";
+import { Home, TestingPage, FlightBooking } from "./imports/Global";
+import ClientLayout from "../layouts/ClientLayout";
 import NotFound from "../layouts/NotFound";
 import GuestLayout from "../layouts/GuestLayout";
-import ClientLayout from "../layouts/ClientLayout";
 import EmployeeLayout from "../layouts/EmployeeLayout";
-import Home from "../views/home/Home";
-import TestingPage from "../components/custom/TestingPage";
+import LazyLoading from "../layouts/LazyLoader";
 
 const router = createBrowserRouter([
   {
@@ -20,19 +21,47 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "search/flights",
+        element: (
+          <Suspense fallback={<LazyLoading />}>
+            <FlightBooking />
+          </Suspense>
+        ),
+      },
+      {
         path: "test",
-        element: <TestingPage />,
+        element: (
+          <Suspense fallback={<LazyLoading />}>
+            <TestingPage />
+          </Suspense>
+        ),
       },
     ],
   },
   {
     path: "/app",
-    element: <ClientLayout />,
+    element: (
+      <ClientLayout>
+        <Suspense fallback={<LazyLoading />}>
+          {/* Lazy load other components for ClientLayout */}
+          {/* Example:
+          <LazyLoadedComponent /> */}
+        </Suspense>
+      </ClientLayout>
+    ),
     children: [],
   },
   {
     path: "/workspace",
-    element: <EmployeeLayout />,
+    element: (
+      <EmployeeLayout>
+        <Suspense fallback={<LazyLoading />}>
+          {/* Lazy load other components for EmployeeLayout */}
+          {/* Example:
+          <LazyLoadedComponent /> */}
+        </Suspense>
+      </EmployeeLayout>
+    ),
     children: [],
   },
   {
