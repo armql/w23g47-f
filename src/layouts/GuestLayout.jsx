@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../views/navbar/Navbar";
 import Callout from "../components/common/Callout";
+import Footer from '../views/footer/Footer'
 
 export default function GuestLayout() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -28,6 +29,7 @@ export default function GuestLayout() {
           {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         </button>
       </div>
+      <Footer/>
     </Fragment>
   );
 }
